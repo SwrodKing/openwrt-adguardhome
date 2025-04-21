@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'luci-app-adguardhome/Makefile'
+      - './luci-app-adguardhome/Makefile'
   workflow_dispatch:
 
 jobs:
@@ -48,16 +48,16 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          # sudo apt-get update
-          sudo apt-get -y install curl git tar wget
+          sudo apt-get update && sudo apt-get -y install curl git tar wget
       - name: Install OpenWrt SDK
         run: |
           cd ..
           mkdir tmp
-          curl -SLk --connect-timeout 30 --retry 2 "https://archive.openwrt.org/releases/23.05.3/targets/x86/64/openwrt-sdk-23.05.3-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz" -o "./tmp/SDK.tar.xz"
+          # curl -SLk --connect-timeout 30 --retry 2 "https://archive.openwrt.org/releases/23.05.5/targets/x86/64/openwrt-sdk-23.05.5-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz" -o "./tmp/SDK.tar.xz"
+          curl -SLk --connect-timeout 30 --retry 2 "https://archive.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-sdk-24.10.1-x86-64_gcc-13.3.0_musl.Linux-x86_64.tar.zst" -o "./tmp/SDK.tar.zst"
           cd \tmp
-          tar xf SDK.tar.xz
-          mv "openwrt-sdk-23.05.3-x86-64_gcc-12.3.0_musl.Linux-x86_64" "SDK"
+          tar xf SDK.tar.zst
+          mv "openwrt-sdk-24.10.1-x86-64_gcc-13.3.0_musl.Linux-x86_64" "SDK"
       - name: Change Source Codes Version
         run: |
           echo "v${{ needs.Get-Version.outputs.version }}-beta" > ./version
