@@ -13,11 +13,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up OpenWrt SDK environment
       - name: Setup OpenWrt SDK
         run: |
           sudo apt-get update
@@ -27,34 +25,33 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      # Add luci-app-adguardhome to package directory
       - name: Add luci-app-adguardhome package
         run: |
           cd openwrt-sdk/package
           ln -s $GITHUB_WORKSPACE/luci-app-adguardhome .
           cd ..
 
-      # Configure the build
       - name: Configure build
         run: |
           cd openwrt-sdk
           make defconfig
 
-      # Build the IPK package
       - name: Build IPK
         run: |
           cd openwrt-sdk
           make package/luci-app-adguardhome/compile V=s
 
-      # Debug generated IPK path
+      - name: 调试构建输出
+        run: |
+          ls -R openwrt-sdk/bin/packages
+
       - name: Debug IPK Path
         run: |
           find openwrt-sdk/bin/packages -name "luci-app-adguardhome*.ipk"
 
-      # Upload the built IPK artifact
-      - name: Upload IPK
+      - name: 上传 IPK 文件
         uses: actions/upload-artifact@v3
         with:
           name: luci-app-adguardhome-ipk
           path: |
-            openwrt-sdk/bin/packages/**/*luci-app-adguardhome*.ipk
+            openwrt-sdk/bin/packages/**/*.ipk
