@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-ipk:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       # Checkout the repository
@@ -21,7 +21,7 @@ jobs:
       - name: Setup OpenWrt SDK
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libncurses5-dev gawk gettext unzip file libssl-dev python3 git
+          sudo apt-get install -y build-essential libncurses5-dev gawk gettext unzip file libssl-dev python3 git zlib1g-dev sudo quilt
           git clone https://github.com/openwrt/openwrt.git openwrt-sdk
           cd openwrt-sdk
           ./scripts/feeds update -a
@@ -38,7 +38,7 @@ jobs:
       - name: Configure build
         run: |
           cd openwrt-sdk
-          make menuconfig
+          make defconfig
 
       # Build the IPK package
       - name: Build IPK
@@ -46,10 +46,15 @@ jobs:
           cd openwrt-sdk
           make package/luci-app-adguardhome/compile V=s
 
+      # Debug generated IPK path
+      - name: Debug IPK Path
+        run: |
+          find openwrt-sdk/bin/packages -name "luci-app-adguardhome*.ipk"
+
       # Upload the built IPK artifact
       - name: Upload IPK
         uses: actions/upload-artifact@v3
         with:
           name: luci-app-adguardhome-ipk
           path: |
-            openwrt-sdk/bin/packages/**/luci-app-adguardhome*.ipk
+            openwrt-sdk/bin/packages/**/*luci-app-adguardhome*.ipk
