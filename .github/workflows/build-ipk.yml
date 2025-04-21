@@ -10,10 +10,10 @@ on:
 
 jobs:
   build-ipk:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Clone Repository
         uses: actions/checkout@v3
 
       - name: Setup OpenWrt SDK
