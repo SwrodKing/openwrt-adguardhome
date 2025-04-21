@@ -42,7 +42,7 @@ jobs:
           make package/luci-app-adguardhome/compile V=s
 
       - name: Upload IPK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: luci-app-adguardhome-ipk
           path: |
